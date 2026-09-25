@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Code Standards & Best Practices Guide</title>
+  <meta name="description" content="A complete mini-session interactive guide to JavaScript Code Standards, Best Practices, Refactoring, and Teaching Strategies.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-card-hover: rgba(51, 65, 85, 0.8);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --code-bg: #090d16;
+      --badge-bg: rgba(139, 92, 246, 0.15);
+      --badge-text: #c084fc;
+      --shadow-glow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
+    }
+
+    html.light {
+      --bg-primary: #f8fafc;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: rgba(241, 245, 249, 1);
+      --border-color: rgba(0, 0, 0, 0.1);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #1e293b;
+      --badge-bg: rgba(139, 92, 246, 0.1);
+      --badge-text: #7c3aed;
+      --shadow-glow: 0 10px 30px -10px rgba(99, 102, 241, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    /* Scroll progress bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s ease;
+    }
+
+    /* Sticky Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 900;
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    html.light .navbar {
+      background: rgba(248, 250, 252, 0.85);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #c084fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+
+    .nav-search {
+      position: relative;
+      flex: 1;
+      max-width: 450px;
+    }
+
+    .nav-search input {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    html.light .nav-search input {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-search input:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .nav-search i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #ffffff;
+      border: none;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      box-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.5);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover {
+      background: var(--bg-card);
+      color: var(--accent-amber);
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: 1350px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      background: radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
+      border-radius: 24px;
+      margin-bottom: 2.5rem;
+      position: relative;
+      border: 1px solid var(--border-color);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    html.light .hero h1 {
+      background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 750px;
+      margin: 0 auto 2rem;
+    }
+
+    .quote-box {
+      background: rgba(139, 92, 246, 0.1);
+      border-left: 4px solid var(--accent-purple);
+      padding: 1.2rem 1.75rem;
+      border-radius: 0 12px 12px 0;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      text-align: left;
+      font-style: italic;
+      color: var(--text-main);
+      font-size: 1.05rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Main Grid Layout */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none; /* Mobile navigation via dropdown if needed */
+      }
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      position: sticky;
+      top: 5rem;
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 1.25rem;
+      border: 1px solid var(--border-color);
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      padding-left: 0.5rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      color: var(--text-main);
+      background: rgba(139, 92, 246, 0.15);
+    }
+    .sidebar-menu a.active {
+      font-weight: 600;
+      color: var(--badge-text);
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      scroll-margin-top: 6rem;
+    }
+
+    .section-card:hover {
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-number {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #ffffff;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .section-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .card-tag {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      font-size: 0.98rem;
+    }
+
+    /* Code Comparison Split Layout */
+    .code-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .code-comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .code-box {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background: var(--code-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-box.bad {
+      border-top: 3px solid var(--accent-rose);
+    }
+
+    .code-box.good {
+      border-top: 3px solid var(--accent-emerald);
+    }
+
+    .code-header {
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .code-header .bad-title {
+      color: var(--accent-rose);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .code-header .good-title {
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .copy-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Syntax Highlighting Mock Tokens */
+    .token-keyword { color: #f472b6; font-weight: 600; }
+    .token-string { color: #a7f3d0; }
+    .token-function { color: #60a5fa; }
+    .token-number { color: #fbbf24; }
+    .token-comment { color: #64748b; font-style: italic; }
+    .token-operator { color: #c084fc; }
+
+    /* Tables */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+
+    .custom-table th,
+    .custom-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .custom-table th {
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Interactive Teaching Playground Section */
+    .teaching-box {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 2px solid var(--accent-purple);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 3rem 0;
+      box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.25);
+    }
+
+    .flaw-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 9999px;
+      background: rgba(244, 63, 94, 0.15);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0.25rem;
+    }
+
+    .flaw-chip:hover,
+    .flaw-chip.selected {
+      background: var(--accent-rose);
+      color: #ffffff;
+    }
+
+    /* Interactive Checklist */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .checklist-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--accent-purple);
+      cursor: pointer;
+    }
+
+    .checklist-progress {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .checklist-progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981, #3b82f6);
+      transition: width 0.3s ease;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      margin-top: 4rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="#" class="nav-brand">
+      <i class="fa-solid fa-code"></i> JS Standards Master Guide
+    </a>
+
+    <div class="nav-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search standards, e.g., 'naming', 'dry', 'async', 'eslint'..." onkeyup="filterStandards()">
+    </div>
+
+    <div class="nav-actions">
+      <a href="#teaching-strategy" class="btn btn-primary">
+        <i class="fa-solid fa-chalkboard-user"></i> Teaching Strategy
+      </a>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-badge">
+        <i class="fa-solid fa-graduation-cap"></i> Interactive Mini-Session & Reference Guide
+      </div>
+      <h1>JavaScript Code Standards & Best Practices</h1>
+      <p>Master clean code, consistent formatting, maintainable architecture, and effective classroom delivery for tomorrow's session.</p>
+      
+      <div class="quote-box">
+        <i class="fa-solid fa-quote-left" style="color: var(--accent-purple); margin-right: 0.5rem;"></i>
+        "Good code isn't code that merely works — it's code that is easy to read, understand, test, maintain, and modify."
+      </div>
+
+      <div class="hero-buttons">
+        <a href="#section-1" class="btn"><i class="fa-solid fa-book-open"></i> Start Reading (30 Rules)</a>
+        <a href="#checklist-section" class="btn"><i class="fa-solid fa-list-check"></i> Code Review Checklist</a>
+        <a href="#teaching-strategy" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> Tomorrow's Interactive Session</a>
+      </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="content-grid">
+      
+      <!-- Sticky Sidebar Menu -->
+      <aside class="sidebar">
+        <h3>Quick Navigation</h3>
+        <ul class="sidebar-menu" id="sidebarMenu">
+          <li><a href="#section-1" class="active"><i class="fa-solid fa-layer-group"></i> 1. What are Standards?</a></li>
+          <li><a href="#section-2"><i class="fa-solid fa-circle-question"></i> 2. Why We Need Standards</a></li>
+          <li><a href="#section-3"><i class="fa-solid fa-signature"></i> 3. Naming Conventions</a></li>
+          <li><a href="#section-4"><i class="fa-solid fa-tag"></i> 4. Meaningful Names</a></li>
+          <li><a href="#section-5"><i class="fa-solid fa-hashtag"></i> 5. Magic Numbers</a></li>
+          <li><a href="#section-6"><i class="fa-solid fa-toggle-on"></i> 6. const vs let vs var</a></li>
+          <li><a href="#section-7"><i class="fa-solid fa-scissors"></i> 7. Small Functions (SRP)</a></li>
+          <li><a href="#section-8"><i class="fa-solid fa-copy"></i> 8. DRY Principle</a></li>
+          <li><a href="#section-9"><i class="fa-solid fa-comment-dots"></i> 9. Comments Best Practice</a></li>
+          <li><a href="#section-10"><i class="fa-solid fa-equals"></i> 10. Strict Equality (===)</a></li>
+          <li><a href="#section-11"><i class="fa-solid fa-diagram-project"></i> 11. Avoid Deep Nesting</a></li>
+          <li><a href="#section-12"><i class="fa-solid fa-link"></i> 12. Optional Chaining</a></li>
+          <li><a href="#section-13"><i class="fa-solid fa-filter"></i> 13. Nullish Coalescing</a></li>
+          <li><a href="#section-14"><i class="fa-solid fa-list"></i> 14. Modern Array Methods</a></li>
+          <li><a href="#section-15"><i class="fa-solid fa-shield-halved"></i> 15. Immutability</a></li>
+          <li><a href="#section-16"><i class="fa-solid fa-triangle-exclamation"></i> 16. Error Handling</a></li>
+          <li><a href="#section-17"><i class="fa-solid fa-clock"></i> 17. Async / Await</a></li>
+          <li><a href="#section-18"><i class="fa-solid fa-gears"></i> 18. Environment Configs</a></li>
+          <li><a href="#section-19"><i class="fa-solid fa-folder-tree"></i> 19. Separate Concerns</a></li>
+          <li><a href="#section-20"><i class="fa-solid fa-feather"></i> 20. Simple vs Clever Code</a></li>
+          <li><a href="#section-21"><i class="fa-solid fa-box-archive"></i> 21. Early Abstractions</a></li>
+          <li><a href="#section-22"><i class="fa-solid fa-wand-magic-sparkles"></i> 22. ESLint Enforcement</a></li>
+          <li><a href="#section-23"><i class="fa-solid fa-align-left"></i> 23. Prettier Formatting</a></li>
+          <li><a href="#section-24"><i class="fa-solid fa-user-check"></i> 24. Code Reviews</a></li>
+          <li><a href="#section-25"><i class="fa-solid fa-key"></i> 25. Don't Commit Secrets</a></li>
+          <li><a href="#section-26"><i class="fa-solid fa-vial"></i> 26. Testable Code</a></li>
+          <li><a href="#section-27"><i class="fa-solid fa-heart"></i> 27. KISS Principle</a></li>
+          <li><a href="#section-28"><i class="fa-solid fa-ban"></i> 28. YAGNI Principle</a></li>
+          <li><a href="#section-29"><i class="fa-solid fa-scale-balanced"></i> 29. DRY vs KISS</a></li>
+          <li><a href="#checklist-section"><i class="fa-solid fa-square-check"></i> 30. Review Checklist</a></li>
+          <li><a href="#teaching-strategy"><i class="fa-solid fa-chalkboard"></i> 31. Teaching Strategy</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Topic Cards Container -->
+      <main id="standardsContainer">
+
+        <!-- Section 1 -->
+        <article class="section-card" id="section-1" data-keywords="definition standards formatting consistency readable maintainable">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">1</div>
+              <h2>What are Code Standards?</h2>
+            </div>
+            <span class="card-tag">Core Fundamentals</span>
+          </div>
+          <p class="section-desc">Code standards are a set of unified rules and formatting guidelines that developers follow to keep a codebase consistent, readable, maintainable, scalable, less error-prone, and team-friendly.</p>
+          
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Without Standards</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> username=<span class="token-string">"Stuti"</span>
+<span class="token-keyword">function</span> <span class="token-function">getuser</span>(){
+<span class="token-keyword">return</span> username
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ With Standards</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> username = <span class="token-string">"Stuti"</span>;
+
+<span class="token-keyword">function</span> <span class="token-function">getUser</span>() {
+  <span class="token-keyword">return</span> username;
+}</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 2 -->
+        <article class="section-card" id="section-2" data-keywords="why benefits readability maintainability consistency bugs collaboration scalability">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">2</div>
+              <h2>Why Do We Need Code Standards?</h2>
+            </div>
+            <span class="card-tag">Team Collaboration</span>
+          </div>
+          <p class="section-desc">Imagine a team of 10 developers writing code differently (e.g., <code>getUser()</code>, <code>GetUser()</code>, <code>get_user()</code>, <code>getuser()</code>). It quickly becomes chaotic. Unified standards ensure harmony across the team.</p>
+
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Benefit</th>
+                <th>Impact & Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Readability</strong></td>
+                <td>Code is instantly understandable by any engineer on the team.</td>
+              </tr>
+              <tr>
+                <td><strong>Maintainability</strong></td>
+                <td>Refactoring, updating, or fixing bugs takes significantly less time.</td>
+              </tr>
+              <tr>
+                <td><strong>Consistency</strong></td>
+                <td>Every file looks like it was written by a single, cohesive author.</td>
+              </tr>
+              <tr>
+                <td><strong>Fewer Bugs</strong></td>
+                <td>Eliminates common syntax pitfalls and scope bugs.</td>
+              </tr>
+              <tr>
+                <td><strong>Collaboration</strong></td>
+                <td>Smooth onboarding for new devs and faster code review turnaround.</td>
+              </tr>
+              <tr>
+                <td><strong>Scalability</strong></td>
+                <td>Large enterprise projects remain clean as features multiply.</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <!-- Section 3 -->
+        <article class="section-card" id="section-3" data-keywords="naming conventions camelcase snakecase variables functions constants">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">3</div>
+              <h2>Naming Conventions</h2>
+            </div>
+            <span class="card-tag">Code Style</span>
+          </div>
+          <p class="section-desc">Consistent casing rules make code self-documenting. Use <strong>camelCase</strong> for variables and functions, and <strong>UPPER_SNAKE_CASE</strong> for fixed configuration constants.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Avoid Inconsistent Casing</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> first_name = <span class="token-string">"Stuti"</span>;
+<span class="token-keyword">const</span> userage = <span class="token-number">22</span>;
+<span class="token-keyword">const</span> TOTALAMOUNT = <span class="token-number">500</span>;</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Recommended Standard</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> firstName = <span class="token-string">"Stuti"</span>;
+<span class="token-keyword">const</span> userAge = <span class="token-number">22</span>;
+
+<span class="token-comment">// Action-verb functions:</span>
+<span class="token-keyword">function</span> <span class="token-function">getUser</span>() {}
+<span class="token-keyword">function</span> <span class="token-function">calculateTotal</span>() {}
+
+<span class="token-comment">// Fixed global configuration constant:</span>
+<span class="token-keyword">const</span> MAX_RETRY_COUNT = <span class="token-number">3</span>;</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 4 -->
+        <article class="section-card" id="section-4" data-keywords="meaningful names variables descriptive x d u">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">4</div>
+              <h2>Use Meaningful Names</h2>
+            </div>
+            <span class="card-tag">Clean Code</span>
+          </div>
+          <p class="section-desc">Names should immediately explain what the variable or function represents without needing extra comments.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Cryptic Single-Letter Names</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> x = <span class="token-number">500</span>;
+<span class="token-keyword">const</span> d = <span class="token-number">10</span>;
+<span class="token-keyword">const</span> u = <span class="token-function">getUser</span>();</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Self-Descriptive Names</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> totalAmount = <span class="token-number">500</span>;
+<span class="token-keyword">const</span> discount = <span class="token-number">10</span>;
+<span class="token-keyword">const</span> user = <span class="token-function">getUser</span>();</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 5 -->
+        <article class="section-card" id="section-5" data-keywords="magic numbers constants hardcoded retries max">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">5</div>
+              <h2>Avoid Magic Numbers</h2>
+            </div>
+            <span class="card-tag">Readability</span>
+          </div>
+          <p class="section-desc">A <strong>magic number</strong> is a raw number in code without explanation. Replace magic numbers with named constants to express intent clearly.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Unclear Magic Number</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (retryCount &gt; <span class="token-number">3</span>) {
+  <span class="token-comment">// What does 3 represent?</span>
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Named Constant</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> MAX_RETRIES = <span class="token-number">3</span>;
+
+<span class="token-keyword">if</span> (retryCount &gt; MAX_RETRIES) {
+  <span class="token-comment">// Intention is 100% explicit</span>
+}</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 6 -->
+        <article class="section-card" id="section-6" data-keywords="const let var scope hoisting block">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">6</div>
+              <h2>Use const and let Correctly</h2>
+            </div>
+            <span class="card-tag">Scope & Safety</span>
+          </div>
+          <p class="section-desc">Default to <code>const</code> for all variable declarations. Use <code>let</code> only when re-assignment is explicitly needed. Completely avoid <code>var</code> in modern JS.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Outdated var</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">var</span> name = <span class="token-string">"Stuti"</span>; <span class="token-comment">// Leaks scope</span></code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Block-scoped const / let</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> userName = <span class="token-string">"Stuti"</span>; <span class="token-comment">// Default</span>
+<span class="token-keyword">let</span> count = <span class="token-number">0</span>;            <span class="token-comment">// Only if reassigned</span>
+count++;</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 7 -->
+        <article class="section-card" id="section-7" data-keywords="functions srp single responsibility modular small">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">7</div>
+              <h2>Keep Functions Small (Single Responsibility)</h2>
+            </div>
+            <span class="card-tag">Architecture</span>
+          </div>
+          <p class="section-desc">A function should do <strong>one thing</strong> well (Single Responsibility Principle — SRP). Break monolithic functions into small, reusable helpers.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Monolithic Function (Does Everything)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">function</span> <span class="token-function">processUser</span>() {
+  <span class="token-comment">// validate user</span>
+  <span class="token-comment">// calculate salary</span>
+  <span class="token-comment">// save to database</span>
+  <span class="token-comment">// send email</span>
+  <span class="token-comment">// log activity</span>
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Modular Focused Helpers</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">function</span> <span class="token-function">validateUser</span>() {}
+<span class="token-keyword">function</span> <span class="token-function">calculateSalary</span>() {}
+<span class="token-keyword">function</span> <span class="token-function">saveUser</span>() {}
+
+<span class="token-keyword">function</span> <span class="token-function">processUser</span>() {
+  <span class="token-function">validateUser</span>();
+  <span class="token-function">calculateSalary</span>();
+  <span class="token-function">saveUser</span>();
+}</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 8 -->
+        <article class="section-card" id="section-8" data-keywords="dry duplicate code dont repeat yourself calculation helper">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">8</div>
+              <h2>Avoid Duplicate Code — DRY</h2>
+            </div>
+            <span class="card-tag">Principles</span>
+          </div>
+          <p class="section-desc"><strong>DRY (Don't Repeat Yourself)</strong>. Extract repetitive calculation logic into a single function so changes only ever need to happen in one place.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Repetitive Logic</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> user1Total = price1 + tax;
+<span class="token-keyword">const</span> user2Total = price2 + tax;
+<span class="token-keyword">const</span> user3Total = price3 + tax;</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Encapsulated Function</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">function</span> <span class="token-function">calculateTotal</span>(price, tax) {
+  <span class="token-keyword">return</span> price + tax;
+}
+
+<span class="token-keyword">const</span> user1Total = <span class="token-function">calculateTotal</span>(price1, tax);
+<span class="token-keyword">const</span> user2Total = <span class="token-function">calculateTotal</span>(price2, tax);</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 9 -->
+        <article class="section-card" id="section-9" data-keywords="comments obvious why what context documentation">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">9</div>
+              <h2>Don't Overuse Comments</h2>
+            </div>
+            <span class="card-tag">Documentation</span>
+          </div>
+          <p class="section-desc">Comments should explain <strong>why</strong> complex business decisions were made, not restate the obvious code behavior (the <strong>what</strong>).</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Restating Obvious Code</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-comment">// Increment count by 1</span>
+count++;
+
+<span class="token-comment">// Call API</span>
+<span class="token-function">callApi</span>();</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Explaining Rationale & Context</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-comment">// Payment gateway rate-limits on burst attempts, retry once after 500ms</span>
+retryCount++;</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 10 -->
+        <article class="section-card" id="section-10" data-keywords="strict equality triple equals coercion double equals">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">10</div>
+              <h2>Use Strict Equality (===)</h2>
+            </div>
+            <span class="card-tag">Type Safety</span>
+          </div>
+          <p class="section-desc">Always use <code>===</code> and <code>!==</code> instead of <code>==</code> and <code>!=</code> to prevent unintended implicit type coercion bugs.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Loose Equality (Implicit Coercion)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-number">5</span> == <span class="token-string">"5"</span> <span class="token-comment">// true! Dangerous implicit coercion</span></code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Strict Equality</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-number">5</span> === <span class="token-string">"5"</span> <span class="token-comment">// false! Checks value AND type</span>
+
+<span class="token-keyword">if</span> (userId === <span class="token-number">10</span>) {
+  <span class="token-comment">// Type-safe comparison</span>
+}</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 11 -->
+        <article class="section-card" id="section-11" data-keywords="nested nesting guard clauses early returns pyramid doom">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">11</div>
+              <h2>Avoid Deeply Nested Code (Guard Clauses)</h2>
+            </div>
+            <span class="card-tag">Readability</span>
+          </div>
+          <p class="section-desc">Replace deeply nested <code>if</code> blocks with early return <strong>guard clauses</strong> to flatten logic and lower cognitive load.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Deep Nesting (Pyramid of Doom)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (user) {
+  <span class="token-keyword">if</span> (user.isActive) {
+    <span class="token-keyword">if</span> (user.hasPermission) {
+      <span class="token-keyword">if</span> (user.role === <span class="token-string">"admin"</span>) {
+        <span class="token-comment">// do work</span>
+      }
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Clean Guard Clauses</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (!user) <span class="token-keyword">return</span>;
+<span class="token-keyword">if</span> (!user.isActive) <span class="token-keyword">return</span>;
+<span class="token-keyword">if</span> (!user.hasPermission) <span class="token-keyword">return</span>;
+<span class="token-keyword">if</span> (user.role !== <span class="token-string">"admin"</span>) <span class="token-keyword">return</span>;
+
+<span class="token-comment">// do work cleanly</span></code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 12 -->
+        <article class="section-card" id="section-12" data-keywords="optional chaining safe access property address city">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">12</div>
+              <h2>Use Optional Chaining (?.)</h2>
+            </div>
+            <span class="card-tag">Modern JS</span>
+          </div>
+          <p class="section-desc">Safely access deeply nested object properties without verbose multi-level checking using <code>?.</code> syntax.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Verbose Guard Checks</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (user &amp;&amp; user.address &amp;&amp; user.address.city) {
+  console.log(user.address.city);
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Concise Optional Chaining</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code>console.log(user?.address?.city);</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 13 -->
+        <article class="section-card" id="section-13" data-keywords="nullish coalescing fallback null undefined OR operator">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">13</div>
+              <h2>Use Nullish Coalescing (??)</h2>
+            </div>
+            <span class="card-tag">Modern JS</span>
+          </div>
+          <p class="section-desc">Use <code>??</code> to fallback <em>only</em> when values are <code>null</code> or <code>undefined</code>. Unlike <code>||</code>, it preserves valid falsy values like <code>0</code>, <code>false</code>, and <code>""</code>.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Over-eager OR Operator (||)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> name = user.name || <span class="token-string">"Guest"</span>;
+<span class="token-comment">// Erroneously falls back if user.name is ""</span></code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Safe Nullish Coalescing (??)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> name = user.name ?? <span class="token-string">"Guest"</span>;
+<span class="token-comment">// Falls back ONLY if null or undefined</span></code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 14 -->
+        <article class="section-card" id="section-14" data-keywords="array methods map filter find reduce imperative declarative">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">14</div>
+              <h2>Prefer Modern Array Methods</h2>
+            </div>
+            <span class="card-tag">Functional Style</span>
+          </div>
+          <p class="section-desc">Replace imperative <code>for</code> loops with declarative higher-order array functions like <code>map</code>, <code>filter</code>, <code>find</code>, and <code>reduce</code>.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Imperative Loop</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> names = [];
+<span class="token-keyword">for</span> (<span class="token-keyword">const</span> user <span class="token-keyword">of</span> users) {
+  names.push(user.name);
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Declarative map()</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> names = users.map(user =&gt; user.name);</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 15 -->
+        <article class="section-card" id="section-15" data-keywords="immutability mutation spread react redux state">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">15</div>
+              <h2>Don't Mutate Data Unnecessarily</h2>
+            </div>
+            <span class="card-tag">State Integrity</span>
+          </div>
+          <p class="section-desc">Avoid directly modifying objects and arrays in place. Use spread syntax (<code>...</code>) to create immutable state updates, essential for React/Redux stability.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Direct Object Mutation</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code>user.name = <span class="token-string">"John"</span>; <span class="token-comment">// Mutates reference</span></code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Immutable Copy</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> updatedUser = {
+  ...user,
+  name: <span class="token-string">"John"</span>
+};</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 16 -->
+        <article class="section-card" id="section-16" data-keywords="error handling try catch log monitor swallowed errors">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">16</div>
+              <h2>Handle Errors Properly</h2>
+            </div>
+            <span class="card-tag">Reliability</span>
+          </div>
+          <p class="section-desc">Never leave an empty <code>catch</code> block. Swallowing exceptions makes debugging nearly impossible in production environments.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Empty Catch (Swallowed Error)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">try</span> {
+  <span class="token-keyword">await</span> <span class="token-function">fetchData</span>();
+} <span class="token-keyword">catch</span> (error) {
+  <span class="token-comment">// Swallowed! Silent failure!</span>
+}</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Handled & Logged Exception</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">try</span> {
+  <span class="token-keyword">await</span> <span class="token-function">fetchData</span>();
+} <span class="token-keyword">catch</span> (error) {
+  console.error(<span class="token-string">"Failed to fetch user:"</span>, error);
+}</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 17 -->
+        <article class="section-card" id="section-17" data-keywords="async await promises asynchronous readability flattened">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">17</div>
+              <h2>Use async/await for Asynchronous Code</h2>
+            </div>
+            <span class="card-tag">Async Patterns</span>
+          </div>
+          <p class="section-desc"><code>async/await</code> flattens promise chains, making asynchronous flows look and behave sequentially like synchronous code.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Nested Promise Chains (.then)</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-function">getUser</span>()
+  .then(user =&gt; <span class="token-function">getOrders</span>(user.id))
+  .then(orders =&gt; <span class="token-function">processOrders</span>(orders))
+  .catch(error =&gt; console.error(error));</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Readable async/await</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">try</span> {
+  <span class="token-keyword">const</span> user = <span class="token-keyword">await</span> <span class="token-function">getUser</span>();
+  <span class="token-keyword">const</span> orders = <span class="token-keyword">await</span> <span class="token-function">getOrders</span>(user.id);
+  <span class="token-function">processOrders</span>(orders);
+} <span class="token-keyword">catch</span> (error) {
+  console.error(error);
+}</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 18 -->
+        <article class="section-card" id="section-18" data-keywords="environment variables config base url process.env hardcoding">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">18</div>
+              <h2>Avoid Hardcoding Configuration</h2>
+            </div>
+            <span class="card-tag">Configuration</span>
+          </div>
+          <p class="section-desc">Keep environment-dependent values (API endpoints, thresholds) in environment variables or configuration objects.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Hardcoded Production Endpoint</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-function">fetch</span>(<span class="token-string">"https://production-api.example.com/users"</span>);</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Environment-based Config</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> API_BASE_URL = process.env.API_BASE_URL;
+
+<span class="token-function">fetch</span>(<span class="token-string">`${API_BASE_URL}/users`</span>);</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 19 -->
+        <article class="section-card" id="section-19" data-keywords="separate concerns modular structure services utils components">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">19</div>
+              <h2>Separate Concerns</h2>
+            </div>
+            <span class="card-tag">Architecture</span>
+          </div>
+          <p class="section-desc">Divide applications into logical modules (UI components, services, utilities, API hooks) so each layer focuses purely on its own domain.</p>
+
+          <pre><code>src/
+├── components/   <span class="token-comment"># View & UI layout</span>
+├── services/     <span class="token-comment"># Data fetching & network logic</span>
+├── utils/        <span class="token-comment"># Helper utility functions</span>
+└── constants/    <span class="token-comment"># Fixed configuration</span></code></pre>
+        </article>
+
+        <!-- Section 20 -->
+        <article class="section-card" id="section-20" data-keywords="unnecessary complexity readable vs clever code simplicity">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">20</div>
+              <h2>Avoid Unnecessary Complexity</h2>
+            </div>
+            <span class="card-tag">Clean Code</span>
+          </div>
+          <p class="section-desc">Readable code is always superior to overly dense, "clever" one-liners that confuse teammates.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Dense "Clever" One-Liner</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> res = users?.filter(Boolean)?.map(u =&gt; u?.name)?.filter(Boolean);</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Clear Multi-step Logic</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> validUsers = users.filter(Boolean);
+<span class="token-keyword">const</span> names = validUsers.map(user =&gt; user.name);</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 21 -->
+        <article class="section-card" id="section-21" data-keywords="abstractions premature factory design pattern complexity">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">21</div>
+              <h2>Don't Create Abstractions Too Early</h2>
+            </div>
+            <span class="card-tag">Architecture</span>
+          </div>
+          <p class="section-desc">Avoid constructing complex abstract classes and factories for single-use cases based on hypothetical future needs.</p>
+        </article>
+
+        <!-- Section 22 & 23 -->
+        <article class="section-card" id="section-22" data-keywords="eslint prettier linting formatting tools automated rules">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">22 & 23</div>
+              <h2>Automate with ESLint & Prettier</h2>
+            </div>
+            <span class="card-tag">Tooling</span>
+          </div>
+          <p class="section-desc">Don't rely solely on human memory. Use tools to analyze code and auto-format layout rules on save.</p>
+
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Primary Job</th>
+                <th>Enforced Rules Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: var(--accent-purple);">ESLint</strong></td>
+                <td>Catches code-quality defects & syntax bugs</td>
+                <td><code>no-unused-vars</code>, <code>eqeqeq</code>, <code>no-console</code></td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--accent-blue);">Prettier</strong></td>
+                <td>Formats layout & visual alignment automatically</td>
+                <td>Indentation, line wrapping, semicolon insertion, quote style</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <!-- Section 24 -->
+        <article class="section-card" id="section-24" data-keywords="code review best practices readability logic security maintainability">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">24</div>
+              <h2>Code Review Best Practices</h2>
+            </div>
+            <span class="card-tag">Team Process</span>
+          </div>
+          <p class="section-desc">When reviewing pull requests, systematically evaluate five pillars:</p>
+          <ul style="padding-left: 1.5rem; color: var(--text-muted);">
+            <li><strong>Readability:</strong> Can I understand this logic in under 60 seconds?</li>
+            <li><strong>Logic & Edge Cases:</strong> Are null/undefined values and error paths covered?</li>
+            <li><strong>Security:</strong> Are inputs sanitized? Are tokens or credentials safe?</li>
+            <li><strong>Performance:</strong> Are heavy functions avoided inside render loops or standard iterations?</li>
+            <li><strong>Testing:</strong> Are unit tests verifying the critical business outcomes?</li>
+          </ul>
+        </article>
+
+        <!-- Section 25 -->
+        <article class="section-card" id="section-25" data-keywords="secrets passwords api keys env security gitignore">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">25</div>
+              <h2>Don't Commit Secrets</h2>
+            </div>
+            <span class="card-tag">Security</span>
+          </div>
+          <p class="section-desc">Never hardcode API credentials, passwords, or secret tokens inside repository code files.</p>
+
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Hardcoded Secret Token</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> API_KEY = <span class="token-string">"abc123secret"</span>;</code></pre>
+            </div>
+
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Environment Variable</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <pre><code><span class="token-keyword">const</span> API_KEY = process.env.API_KEY;</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 26 -->
+        <article class="section-card" id="section-26" data-keywords="testable code unit testing isolated functions small">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">26</div>
+              <h2>Write Testable Code</h2>
+            </div>
+            <span class="card-tag">Testing</span>
+          </div>
+          <p class="section-desc">Small, pure functions without side effects are straightforward to test independently with automated test runners like Jest or Vitest.</p>
+        </article>
+
+        <!-- Section 27, 28, 29 -->
+        <article class="section-card" id="section-27" data-keywords="kiss yagni dry principles keep simple stupid you arent gonna need it">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">27-29</div>
+              <h2>Core Software Principles: KISS & YAGNI</h2>
+            </div>
+            <span class="card-tag">Core Mindset</span>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+            <div style="background: rgba(0,0,0,0.2); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+              <h3 style="color: var(--accent-emerald); margin-bottom: 0.5rem;"><i class="fa-solid fa-heart"></i> KISS</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);"><strong>Keep It Simple, Stupid</strong>. Prioritize clean, straightforward code over complex or overly clever shortcuts.</p>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.2); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+              <h3 style="color: var(--accent-amber); margin-bottom: 0.5rem;"><i class="fa-solid fa-ban"></i> YAGNI</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);"><strong>You Aren't Gonna Need It</strong>. Don't write code or configuration systems for hypothetical future requirements.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 30: Interactive Checklist -->
+        <article class="section-card" id="checklist-section" data-keywords="checklist code review audit checklist validation">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number">30</div>
+              <h2>Overall Best-Practice Checklist</h2>
+            </div>
+            <span class="card-tag">Interactive Tool</span>
+          </div>
+          <p class="section-desc">Use this interactive checklist during code reviews to verify adherence to standards. Progress is saved automatically.</p>
+
+          <div class="checklist-progress">
+            <div class="checklist-progress-inner" id="checklistProgressBar"></div>
+          </div>
+
+          <div id="checklistItems">
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Meaningful, descriptive variable &amp; function names</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Using <code>const</code>/<code>let</code> instead of <code>var</code></span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Strict equality <code>===</code> instead of <code>==</code></span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Single Responsibility Principle (SRP) per function</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>DRY logic — eliminated duplicates</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Comments explain <strong>why</strong>, not obvious <strong>what</strong></span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Guard clauses used to avoid deep nesting</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Proper error handling (no empty catch blocks)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>No hardcoded secrets or environment endpoints</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Functions are small and testable</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>KISS &amp; YAGNI principles respected</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>ESLint passes without violations</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Formatted cleanly with Prettier</span></label>
+          </div>
+        </article>
+
+        <!-- Section 31: Interactive Teaching Strategy -->
+        <section class="teaching-box" id="teaching-strategy" data-keywords="teaching strategy session interactive refactor workshop flaws">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <span class="hero-badge"><i class="fa-solid fa-person-chalkboard"></i> Interactive Mini-Session Trainer</span>
+              <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem;">How to Teach This Tomorrow</h2>
+            </div>
+            <button class="btn btn-primary" onclick="resetInteractiveTrainer()"><i class="fa-solid fa-rotate"></i> Reset Trainer</button>
+          </div>
+          
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+            <strong>Pro Teaching Tip:</strong> Don't spend 45 minutes reciting rules! Open with this messy code snippet on screen, ask the audience to spot the flaws, and refactor it step-by-step together.
+          </p>
+
+          <div class="code-box bad" style="margin-bottom: 1.5rem;">
+            <div class="code-header">
+              <span class="bad-title"><i class="fa-solid fa-code"></i> Live Discussion Snippet: "Spot the Flaws"</span>
+            </div>
+            <pre><code><span class="token-keyword">var</span> x = <span class="token-number">10</span>;
+
+<span class="token-keyword">function</span> <span class="token-function">calc</span>(a, b) {
+  <span class="token-keyword">if</span> (a) {
+    <span class="token-keyword">if</span> (b) {
+      <span class="token-keyword">if</span> (a == b) {
+        console.log(<span class="token-string">"same"</span>);
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Click flaws discovered by audience:</h3>
+          <div id="flawsContainer">
+            <button class="flaw-chip" onclick="toggleFlaw(this, 'flaw1')"><i class="fa-solid fa-plus"></i> Outdated var x</button>
+            <button class="flaw-chip" onclick="toggleFlaw(this, 'flaw2')"><i class="fa-solid fa-plus"></i> Magic Number 10</button>
+            <button class="flaw-chip" onclick="toggleFlaw(this, 'flaw3')"><i class="fa-solid fa-plus"></i> Cryptic Names (calc, a, b)</button>
+            <button class="flaw-chip" onclick="toggleFlaw(this, 'flaw4')"><i class="fa-solid fa-plus"></i> Deep Nesting (3 level ifs)</button>
+            <button class="flaw-chip" onclick="toggleFlaw(this, 'flaw5')"><i class="fa-solid fa-plus"></i> Loose Equality (==)</button>
+          </div>
+
+          <!-- Step by step reveal solution -->
+          <div id="refactoringSolution" style="margin-top: 1.5rem; display: none;">
+            <h3 style="color: var(--accent-emerald); font-family: 'Outfit', sans-serif; margin-bottom: 0.75rem;">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Refactored Output (Audience-Driven Improvement):
+            </h3>
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> Clean, Standardized Result</span>
+              </div>
+              <pre><code><span class="token-keyword">const</span> DEFAULT_VALUE = <span class="token-number">10</span>;
+
+<span class="token-keyword">function</span> <span class="token-function">areValuesEqual</span>(firstValue, secondValue) {
+  <span class="token-keyword">if</span> (!firstValue || !secondValue) {
+    <span class="token-keyword">return</span> <span class="token-keyword">false</span>;
+  }
+
+  <span class="token-keyword">return</span> firstValue === secondValue;
+}</code></pre>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>JavaScript Code Standards &amp; Best Practices Interactive Guide &copy; 2026. Built with Vanilla HTML/CSS/JS.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // Theme Toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        html.classList.remove('light');
+        html.classList.add('dark');
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+    }
+
+    // Progress Bar Indicator
+    window.onscroll = function() {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("progress-bar").style.width = scrolled + "%";
+
+      // Active Sidebar Highlighting
+      highlightActiveSidebar();
+    };
+
+    function highlightActiveSidebar() {
+      const sections = document.querySelectorAll('.section-card, .teaching-box');
+      const navLinks = document.querySelectorAll('.sidebar-menu a');
+      let currentSectionId = '';
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 120;
+        if (window.scrollY >= sectionTop) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + currentSectionId) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    // Real-time Search Filter
+    function filterStandards() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.section-card');
+
+      cards.forEach(card => {
+        const keywords = card.getAttribute('data-keywords') || '';
+        const text = card.innerText.toLowerCase();
+        if (keywords.includes(input) || text.includes(input)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Copy Code Snippets
+    function copyCode(button) {
+      const codeBox = button.closest('.code-box');
+      const codeText = codeBox.querySelector('code').innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> Copied!';
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+        }, 1500);
+      });
+    }
+
+    // Interactive Checklist Progress
+    function updateChecklistProgress() {
+      const checkboxes = document.querySelectorAll('#checklistItems input[type="checkbox"]');
+      let checkedCount = 0;
+      checkboxes.forEach(cb => {
+        if (cb.checked) checkedCount++;
+      });
+
+      const percentage = (checkedCount / checkboxes.length) * 100;
+      document.getElementById('checklistProgressBar').style.width = percentage + '%';
+    }
+
+    // Interactive Trainer Flaws Toggle
+    function toggleFlaw(chip, flawId) {
+      chip.classList.toggle('selected');
+      const icon = chip.querySelector('i');
+      if (chip.classList.contains('selected')) {
+        icon.classList.replace('fa-plus', 'fa-check');
+      } else {
+        icon.classList.replace('fa-check', 'fa-plus');
+      }
+
+      const selectedChips = document.querySelectorAll('.flaw-chip.selected');
+      const solutionBox = document.getElementById('refactoringSolution');
+      if (selectedChips.length > 0) {
+        solutionBox.style.display = 'block';
+      } else {
+        solutionBox.style.display = 'none';
+      }
+    }
+
+    function resetInteractiveTrainer() {
+      const chips = document.querySelectorAll('.flaw-chip');
+      chips.forEach(chip => {
+        chip.classList.remove('selected');
+        chip.querySelector('i').className = 'fa-solid fa-plus';
+      });
+      document.getElementById('refactoringSolution').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
