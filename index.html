@@ -660,7 +660,8 @@
       <aside class="sidebar">
         <h3>Quick Navigation</h3>
         <ul class="sidebar-menu" id="sidebarMenu">
-          <li><a href="#section-1" class="active"><i class="fa-solid fa-layer-group"></i> 1. What are Standards?</a></li>
+          <li><a href="#top-priorities" class="active"><i class="fa-solid fa-star"></i> Top Priorities</a></li>
+          <li><a href="#section-1"><i class="fa-solid fa-layer-group"></i> 1. What are Standards?</a></li>
           <li><a href="#section-2"><i class="fa-solid fa-circle-question"></i> 2. Why We Need Standards</a></li>
           <li><a href="#section-3"><i class="fa-solid fa-signature"></i> 3. Naming Conventions</a></li>
           <li><a href="#section-4"><i class="fa-solid fa-tag"></i> 4. Meaningful Names</a></li>
@@ -696,6 +697,59 @@
 
       <!-- Main Topic Cards Container -->
       <main id="standardsContainer">
+
+        <!-- Top Priorities -->
+        <article class="section-card" id="top-priorities" data-keywords="type check validate variables if else handling priority">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-number"><i class="fa-solid fa-star"></i></div>
+              <h2>Top Priorities: Type Checks & Explicit Else</h2>
+            </div>
+            <span class="card-tag" style="background: var(--accent-rose); color: white;">Crucial</span>
+          </div>
+          
+          <h3 style="margin-bottom: 0.75rem; font-family: 'Outfit', sans-serif;">1. Validate Types Before Function Calls</h3>
+          <p class="section-desc">Before passing any variable to any functions, use type check to prevent unexpected errors.</p>
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Without Type Check</span>
+              </div>
+              <pre><code><span class="token-function">processData</span>(userData); <span class="token-comment">// Might crash if userData is null</span></code></pre>
+            </div>
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ With Type Check</span>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (userData <span class="token-operator">!==</span> <span class="token-keyword">null</span> <span class="token-operator">&&</span> <span class="token-keyword">typeof</span> userData <span class="token-operator">===</span> <span class="token-string">'object'</span>) {
+  <span class="token-function">processData</span>(userData);
+}</code></pre>
+            </div>
+          </div>
+          
+          <h3 style="margin: 2rem 0 0.75rem; font-family: 'Outfit', sans-serif;">2. Always Handle Else Part of Every If</h3>
+          <p class="section-desc">Always handle the else part of every if statement.</p>
+          <div class="code-comparison">
+            <div class="code-box bad">
+              <div class="code-header">
+                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Missing Else</span>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (user.isActive) {
+  <span class="token-function">grantAccess</span>();
+} <span class="token-comment">// Unhandled inactive case!</span></code></pre>
+            </div>
+            <div class="code-box good">
+              <div class="code-header">
+                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Explicit Else</span>
+              </div>
+              <pre><code><span class="token-keyword">if</span> (user.isActive) {
+  <span class="token-function">grantAccess</span>();
+} <span class="token-keyword">else</span> {
+  <span class="token-function">denyAccess</span>();
+}</code></pre>
+            </div>
+          </div>
+        </article>
 
         <!-- Section 1 -->
         <article class="section-card" id="section-1" data-keywords="definition standards formatting consistency readable maintainable">

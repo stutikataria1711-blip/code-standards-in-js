@@ -34,8 +34,10 @@
 27. [A Very Important Principle: KISS](#27-a-very-important-principle-kiss)
 28. [YAGNI — You Aren't Gonna Need It](#28-yagni)
 29. [DRY vs KISS — Important Difference](#29-dry-vs-kiss--important-difference)
-30. [Overall Best-Practice Checklist](#30-overall-best-practice-checklist)
-31. [How I'd Teach This Tomorrow (Interactive Teaching Guide)](#31-how-id-teach-this-tomorrow)
+30. [Validate Types Before Function Calls](#30-validate-types-before-function-calls)
+31. [Always Handle Else in If Statements](#31-always-handle-else-in-if-statements)
+32. [Overall Best-Practice Checklist](#32-overall-best-practice-checklist)
+33. [How I'd Teach This Tomorrow (Interactive Teaching Guide)](#33-how-id-teach-this-tomorrow)
 
 ---
 
@@ -669,7 +671,61 @@ Don't build functionality or complex fallback configurations just because you *m
 
 ---
 
-## 30. Overall Best-Practice Checklist
+## 30. Validate Types Before Function Calls
+
+Always check the types of variables before passing them as arguments to functions. This prevents unexpected runtime errors and makes the code more robust.
+
+❌ **Bad:**
+```javascript
+function processData(data) {
+  return data.map(item => item.value);
+}
+
+processData(null); // Uncaught TypeError
+```
+
+✅ **Good:**
+```javascript
+function processData(data) {
+  if (!Array.isArray(data)) {
+    return [];
+  }
+  return data.map(item => item.value);
+}
+
+// Or validate before passing:
+if (Array.isArray(myVariable)) {
+  processData(myVariable);
+}
+```
+
+---
+
+## 31. Always Handle Else in If Statements
+
+Always consider and handle the `else` case of an `if` statement to ensure no scenario is left unaccounted for.
+
+❌ **Bad:**
+```javascript
+if (user.isActive) {
+  grantAccess();
+}
+// What happens if user is not active? We are left in the dark.
+```
+
+✅ **Good:**
+```javascript
+if (user.isActive) {
+  grantAccess();
+} else {
+  denyAccess();
+}
+```
+*Even if the `else` case just logs a warning or explicitly does nothing, making it explicit clarifies the developer's intent.*
+
+---
+
+## 32. Overall Best-Practice Checklist
 
 Use this checklist during your code reviews:
 
@@ -687,10 +743,12 @@ Use this checklist during your code reviews:
 - [ ] Does ESLint pass without warnings or errors?
 - [ ] Is formatting consistent with Prettier?
 - [ ] Are important edge cases (null/undefined/empty arrays) handled?
+- [ ] Are types checked before variables are passed to functions?
+- [ ] Is the `else` case handled for every `if` statement?
 
 ---
 
-## 31. How I'd Teach This Tomorrow
+## 33. How I'd Teach This Tomorrow
 
 ### Interactive Session Plan: *Show Bad Code → Spot the Flaws → Step-by-Step Refactor*
 
