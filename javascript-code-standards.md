@@ -5,6 +5,7 @@
 ---
 
 ## Table of Contents
+0. [📌 Core Engineering Standards (Top Priorities: Rules 0–10)](#-core-engineering-standards-top-priorities-rules-010)
 1. [What are Code Standards?](#1-what-are-code-standards)
 2. [Why Do We Need Code Standards?](#2-why-do-we-need-code-standards)
 3. [Naming Conventions](#3-naming-conventions)
@@ -20,7 +21,7 @@
 13. [Use Nullish Coalescing](#13-use-nullish-coalescing)
 14. [Prefer Modern Array Methods](#14-prefer-modern-array-methods)
 15. [Don't Mutate Data Unnecessarily](#15-dont-mutate-data-unnecessarily)
-16. [Handle Errors Properly](#16-handle-errors-properly)
+16: [Handle Errors Properly](#16-handle-errors-properly)
 17. [Use `async`/`await` for Asynchronous Code](#17-use-asyncawait-for-asynchronous-code)
 18. [Avoid Hardcoding Configuration](#18-avoid-hardcoding-configuration)
 19. [Separate Concerns](#19-separate-concerns)
@@ -38,6 +39,245 @@
 31. [Always Handle Else in If Statements](#31-always-handle-else-in-if-statements)
 32. [Overall Best-Practice Checklist](#32-overall-best-practice-checklist)
 33. [How I'd Teach This Tomorrow (Interactive Teaching Guide)](#33-how-id-teach-this-tomorrow)
+
+---
+
+## 📌 Core Engineering Standards (Top Priorities: Rules 0–10)
+
+> **Handwritten Note Directives:** These 11 foundational rules form our baseline requirements across all development and code reviews.
+
+---
+
+### (0) Type safety in every util method
+Always enforce runtime type checks or TypeScript/JSDoc validation for every parameter passed into utility functions before executing logic.
+
+❌ **Bad:**
+```javascript
+export function formatCurrency(amount) {
+  return `$${amount.toFixed(2)}`; // Crashes if amount is null, undefined, or a string!
+}
+```
+
+✅ **Good:**
+```javascript
+export function formatCurrency(amount) {
+  if (typeof amount !== "number" || Number.isNaN(amount)) {
+    throw new TypeError(`[formatCurrency] Expected valid number, received: ${amount}`);
+  }
+  return `$${amount.toFixed(2)}`;
+}
+```
+
+---
+
+### (1) Code should be meaningful — make it simpler or add documentation
+Code should always be easily understandable. If a teammate cannot grasp the logic of newly written code quickly, refactor it to make it simpler. If business complexity cannot be avoided, provide clear documentation explaining the "why".
+
+❌ **Bad (Cryptic and unexplained):**
+```javascript
+const r = d.reduce((a, c) => (c.s === 1 && c.t > Date.now() - 864e5 ? a + c.v : a), 0);
+```
+
+✅ **Good (Clear and self-explanatory, with context documentation where needed):**
+```javascript
+// Calculate total value of active transactions completed in the last 24 hours (86,400,000 ms)
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const cutoffTime = Date.now() - ONE_DAY_MS;
+
+const activeRecentTotal = transactions
+  .filter(transaction => transaction.status === "ACTIVE" && transaction.timestamp > cutoffTime)
+  .reduce((sum, transaction) => sum + transaction.value, 0);
+```
+
+---
+
+### (2) Every line of code should have a purpose
+Do not write redundant code, useless variables, dead calculations, or unnecessary intermediate assignments that serve no functional or readability purpose.
+
+❌ **Bad:**
+```javascript
+function getUserDisplayName(user) {
+  let tempUser = user;
+  let userName = tempUser.name;
+  let finalResult = userName;
+  return finalResult; // 4 lines doing what 1 line does
+}
+```
+
+✅ **Good:**
+```javascript
+function getUserDisplayName(user) {
+  return user?.name ?? "Anonymous";
+}
+```
+
+---
+
+### (3) Strictly — never use hardcoded values
+Never scatter raw string literals, magic numbers, floats, or type identifiers directly inside business logic. Always extract them into named constants or configuration objects.
+
+❌ **Bad:**
+```javascript
+if (user.role === "admin" && discountRate > 0.15 && retries < 3) {
+  // Hardcoded 'admin', 0.15, and 3
+}
+```
+
+✅ **Good:**
+```javascript
+const USER_ROLES = {
+  ADMIN: "admin",
+  MEMBER: "member"
+};
+
+const MAX_DISCOUNT_RATE = 0.15;
+const MAX_LOGIN_RETRIES = 3;
+
+if (user.role === USER_ROLES.ADMIN && discountRate > MAX_DISCOUNT_RATE && retries < MAX_LOGIN_RETRIES) {
+  // Clear intent and central maintainability
+}
+```
+
+---
+
+### (4) UI constants should be kept in a strings file
+All user-facing copy, button labels, titles, error messages, and modal prompts must be centralized in a dedicated constants/strings file rather than embedded directly within JSX or HTML.
+
+❌ **Bad:**
+```javascript
+<button>Submit Application</button>
+<p className="error">Invalid username or password entered. Please try again.</p>
+```
+
+✅ **Good:**
+```javascript
+// constants/strings.js
+export const STRINGS = {
+  ACTIONS: {
+    SUBMIT_APPLICATION: "Submit Application"
+  },
+  ERRORS: {
+    AUTH_FAILED: "Invalid username or password entered. Please try again."
+  }
+};
+
+// In component:
+<button>{STRINGS.ACTIONS.SUBMIT_APPLICATION}</button>
+<p className="error">{STRINGS.ERRORS.AUTH_FAILED}</p>
+```
+
+---
+
+### (5) Any block statement (`if`, `else`, `for`) should have curly braces `{ }`
+Always surround control flow bodies with curly braces `{ }`, even if the block contains only a single line. Omitting braces is a frequent source of merge conflicts and subtle logic bugs when lines are added later.
+
+❌ **Bad:**
+```javascript
+if (!isAuthenticated) return redirect("/login");
+
+for (let i = 0; i < items.length; i++) sum += items[i];
+```
+
+✅ **Good:**
+```javascript
+if (!isAuthenticated) {
+  return redirect("/login");
+}
+
+for (let i = 0; i < items.length; i++) {
+  sum += items[i];
+}
+```
+
+---
+
+### (6) Periodically, do code reviews
+Code reviews are a continuous team habit, not an afterthought. Perform regular, scheduled peer reviews to:
+- Share architectural patterns and context across developers.
+- Catch security, edge cases, and maintainability concerns early.
+- Keep the entire team aligned on code standards and conventions.
+
+---
+
+### (7) Organize utilities into common utils & module-level utils
+Avoid dumping every helper into a single monolithic `utils.js` file. Group utility functions into two distinct levels:
+1. **Common Utils (`src/utils/`):** Generic, domain-agnostic utilities shared across the entire project (e.g., date formatting, currency, regex validators, string helpers).
+2. **Module-level Utils (`src/modules/<feature>/utils/`):** Domain-specific utilities that belong exclusively to that specific feature or business module.
+
+```text
+src/
+├── utils/                  # 🌐 Common Project-wide Utils
+│   ├── date.js
+│   ├── formatters.js
+│   └── validation.js
+└── modules/
+    └── billing/
+        └── utils/          # 📦 Module-Level Utils (Specific to Billing)
+            ├── taxCalculator.js
+            └── invoiceGenerator.js
+```
+
+---
+
+### (8) Remove TODOs from PRs
+Never merge code containing active `// TODO`, `// FIXME`, or temporary developer notes.
+- Complete the planned work before submitting the PR.
+- If the item must be deferred, remove the comment from the PR and create a tracked issue/ticket in your project management system with full context.
+
+❌ **Bad:**
+```javascript
+// TODO: Fix error boundary when network disconnects
+// TODO: Replace with real user profile API
+const data = mockUser;
+```
+
+✅ **Good:**
+Remove the TODO comment and link the ticket in PR description:
+`Resolves #102; follow-up deferred task logged in JIRA-405.`
+
+---
+
+### (9) `console.log` / `warn` / `error` — replaced or removed using logger methods
+Remove all debug logs before submitting code. In production code, replace raw `console.*` calls with a dedicated application logger service that supports log levels, environment switches, and remote telemetry tracking.
+
+❌ **Bad:**
+```javascript
+console.log("Response arrived:", res);
+console.error("Fetch failed!", err);
+```
+
+✅ **Good:**
+```javascript
+// Use centralized logger
+import { logger } from "@/services/logger";
+
+logger.debug("Response arrived", { endpoint: url, status: res.status });
+logger.error("Fetch failed", { error: err.message, stack: err.stack });
+```
+
+---
+
+### (10) One component / custom hook per file
+Enforce strict modularity by keeping each UI component and each custom hook in its own dedicated file. This ensures clear module boundaries, simplified imports, cleaner tree-shaking, and straightforward unit testing.
+
+❌ **Bad (Multiple components and hooks combined into a single file):**
+```text
+UserProfile.jsx:
+  - UserProfile Component
+  - UserAvatar Component
+  - UserBadge Component
+  - useFetchUserData Hook
+```
+
+✅ **Good (Dedicated single-responsibility files):**
+```text
+components/
+├── UserProfile.jsx         # Only UserProfile component
+├── UserAvatar.jsx          # Only UserAvatar component
+└── UserBadge.jsx           # Only UserBadge component
+hooks/
+└── useUserData.js          # Only useUserData custom hook
+```
 
 ---
 
@@ -742,9 +982,18 @@ Use this checklist during your code reviews:
 - [ ] Have I avoided unnecessary complexity (KISS & YAGNI)?
 - [ ] Does ESLint pass without warnings or errors?
 - [ ] Is formatting consistent with Prettier?
-- [ ] Are important edge cases (null/undefined/empty arrays) handled?
-- [ ] Are types checked before variables are passed to functions?
+- [ ] Are types checked before variables are passed to functions / in every util method? (Rule 0)
+- [ ] Is complex code either simplified or documented with clear context? (Rule 1)
+- [ ] Does every line of code have a distinct purpose? (Rule 2)
+- [ ] Are all magic values (strings, numbers, floats, types) extracted to named constants? (Rule 3)
+- [ ] Are UI strings and copy kept in a dedicated strings/constants file? (Rule 4)
+- [ ] Do all block statements (`if`, `else`, `for`) use curly braces `{ }`? (Rule 5)
 - [ ] Is the `else` case handled for every `if` statement?
+- [ ] Are code reviews conducted periodically? (Rule 6)
+- [ ] Are utilities properly partitioned into common utils vs module-level utils? (Rule 7)
+- [ ] Are all TODOs and temporary comments removed from the PR? (Rule 8)
+- [ ] Are console methods (`log`/`warn`/`error`) replaced or removed using logger methods? (Rule 9)
+- [ ] Is there strictly one component or custom hook per file? (Rule 10)
 
 ---
 

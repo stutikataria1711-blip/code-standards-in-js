@@ -660,7 +660,7 @@
       <aside class="sidebar">
         <h3>Quick Navigation</h3>
         <ul class="sidebar-menu" id="sidebarMenu">
-          <li><a href="#top-priorities" class="active"><i class="fa-solid fa-star"></i> Top Priorities</a></li>
+          <li><a href="#top-priorities" class="active"><i class="fa-solid fa-star"></i> Top Standards (0–10)</a></li>
           <li><a href="#section-1"><i class="fa-solid fa-layer-group"></i> 1. What are Standards?</a></li>
           <li><a href="#section-2"><i class="fa-solid fa-circle-question"></i> 2. Why We Need Standards</a></li>
           <li><a href="#section-3"><i class="fa-solid fa-signature"></i> 3. Naming Conventions</a></li>
@@ -698,57 +698,340 @@
       <!-- Main Topic Cards Container -->
       <main id="standardsContainer">
 
-        <!-- Top Priorities -->
-        <article class="section-card" id="top-priorities" data-keywords="type check validate variables if else handling priority">
+        <!-- Top Priorities (Handwritten Notes Extraction) -->
+        <article class="section-card" id="top-priorities" data-keywords="top priorities core standards type safety util meaningful purpose hardcoded constants strings file braces parentheses if else for code review common utils module level todo console log logger component hook">
           <div class="card-header">
             <div class="card-title-group">
               <div class="card-number"><i class="fa-solid fa-star"></i></div>
-              <h2>Top Priorities: Type Checks & Explicit Else</h2>
+              <h2>Core Code Standards (Top Priorities 0–10)</h2>
             </div>
-            <span class="card-tag" style="background: var(--accent-rose); color: white;">Crucial</span>
+            <span class="card-tag" style="background: var(--accent-rose); color: white;">Directives 0 – 10</span>
           </div>
-          
-          <h3 style="margin-bottom: 0.75rem; font-family: 'Outfit', sans-serif;">1. Validate Types Before Function Calls</h3>
-          <p class="section-desc">Before passing any variable to any functions, use type check to prevent unexpected errors.</p>
-          <div class="code-comparison">
-            <div class="code-box bad">
-              <div class="code-header">
-                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Without Type Check</span>
-              </div>
-              <pre><code><span class="token-function">processData</span>(userData); <span class="token-comment">// Might crash if userData is null</span></code></pre>
+          <p class="section-desc">Key engineering ground rules and non-negotiables extracted directly from code review standards. Follow these across all frontend and utility modules.</p>
+
+          <!-- Rule 0 -->
+          <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">Rule 0</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Type Safety in Every Util Method</h3>
             </div>
-            <div class="code-box good">
-              <div class="code-header">
-                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ With Type Check</span>
-              </div>
-              <pre><code><span class="token-keyword">if</span> (userData <span class="token-operator">!==</span> <span class="token-keyword">null</span> <span class="token-operator">&&</span> <span class="token-keyword">typeof</span> userData <span class="token-operator">===</span> <span class="token-string">'object'</span>) {
-  <span class="token-function">processData</span>(userData);
+            <p class="section-desc">Enforce runtime validation or type guards for all inputs received by utility functions before executing core logic.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Unchecked Util Method</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">function</span> <span class="token-function">formatCurrency</span>(amount) {
+  <span class="token-keyword">return</span> <span class="token-string">`$${amount.toFixed(2)}`</span>; <span class="token-comment">// Crashes if amount is null/string</span>
 }</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Type-Safe Util Method</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">function</span> <span class="token-function">formatCurrency</span>(amount) {
+  <span class="token-keyword">if</span> (<span class="token-keyword">typeof</span> amount <span class="token-operator">!==</span> <span class="token-string">'number'</span> <span class="token-operator">||</span> Number.<span class="token-function">isNaN</span>(amount)) {
+    <span class="token-keyword">throw new</span> TypeError(<span class="token-string">`[formatCurrency] Expected number, got: ${amount}`</span>);
+  }
+  <span class="token-keyword">return</span> <span class="token-string">`$${amount.toFixed(2)}`</span>;
+}</code></pre>
+              </div>
             </div>
           </div>
-          
-          <h3 style="margin: 2rem 0 0.75rem; font-family: 'Outfit', sans-serif;">2. Always Handle Else Part of Every If</h3>
-          <p class="section-desc">Always handle the else part of every if statement.</p>
-          <div class="code-comparison">
-            <div class="code-box bad">
-              <div class="code-header">
-                <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Missing Else</span>
-              </div>
-              <pre><code><span class="token-keyword">if</span> (user.isActive) {
-  <span class="token-function">grantAccess</span>();
-} <span class="token-comment">// Unhandled inactive case!</span></code></pre>
+
+          <!-- Rule 1 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(139, 92, 246, 0.2); color: #c084fc;">Rule 1</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Code Should Be Meaningful (Simpler / Add Documentation)</h3>
             </div>
-            <div class="code-box good">
-              <div class="code-header">
-                <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Explicit Else</span>
+            <p class="section-desc">If teammates cannot understand the new code at first glance, simplify it. If domain complexity cannot be avoided, add clear documentation explaining why.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Cryptic One-Liner</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">const</span> r = d.<span class="token-function">reduce</span>((a, c) =&gt; (c.s === 1 &amp;&amp; c.t &gt; Date.<span class="token-function">now</span>() - 864e5 ? a + c.v : a), 0);</code></pre>
               </div>
-              <pre><code><span class="token-keyword">if</span> (user.isActive) {
-  <span class="token-function">grantAccess</span>();
-} <span class="token-keyword">else</span> {
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Meaningful & Documented</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-comment">// Sum active transactions completed within the last 24 hours</span>
+<span class="token-keyword">const</span> ONE_DAY_MS = 24 * 60 * 60 * 1000;
+<span class="token-keyword">const</span> cutoff = Date.<span class="token-function">now</span>() - ONE_DAY_MS;
+
+<span class="token-keyword">const</span> total = transactions
+  .<span class="token-function">filter</span>(t =&gt; t.status === <span class="token-string">'ACTIVE'</span> &amp;&amp; t.time &gt; cutoff)
+  .<span class="token-function">reduce</span>((sum, t) =&gt; sum + t.value, 0);</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 2 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Rule 2</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Every Line of Code Should Have a Purpose</h3>
+            </div>
+            <p class="section-desc">Avoid pointless temporary variables, dead computations, and unnecessary steps that clutter reading flow.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Redundant Lines & Temp Variables</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">function</span> <span class="token-function">getDisplayName</span>(user) {
+  <span class="token-keyword">let</span> tempUser = user;
+  <span class="token-keyword">let</span> name = tempUser.name;
+  <span class="token-keyword">let</span> output = name;
+  <span class="token-keyword">return</span> output;
+}</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Purposeful & Direct</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">function</span> <span class="token-function">getDisplayName</span>(user) {
+  <span class="token-keyword">return</span> user?.name ?? <span class="token-string">"Guest"</span>;
+}</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 3 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">Rule 3</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Strictly — Never Use Hardcoded Values</h3>
+            </div>
+            <p class="section-desc">Never hardcode strings, integers, floats, or type names in the middle of logic. Extract them into named constants.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Hardcoded Magic Literals</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">if</span> (user.role === <span class="token-string">"admin"</span> &amp;&amp; discount &gt; 0.15 &amp;&amp; retries &lt; 3) {
+  <span class="token-comment">// Hardcoded strings, floats, numbers</span>
+}</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Centralized Named Constants</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">const</span> ROLES = { ADMIN: <span class="token-string">"admin"</span>, USER: <span class="token-string">"user"</span> };
+<span class="token-keyword">const</span> MAX_DISCOUNT_RATE = 0.15;
+<span class="token-keyword">const</span> MAX_RETRY_ATTEMPTS = 3;
+
+<span class="token-keyword">if</span> (user.role === ROLES.ADMIN &amp;&amp; discount &gt; MAX_DISCOUNT_RATE &amp;&amp; retries &lt; MAX_RETRY_ATTEMPTS) {
+  <span class="token-comment">// Self-documenting</span>
+}</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 4 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(236, 72, 153, 0.2); color: #f472b6;">Rule 4</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">UI Constants Should Be Kept in a Strings File</h3>
+            </div>
+            <p class="section-desc">Keep user-facing copy, labels, modal titles, and error messages in a dedicated strings/locale file for centralized management and i18n readiness.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Hardcoded in UI Component</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code>&lt;button&gt;Submit Application&lt;/button&gt;
+&lt;p&gt;Invalid email or password. Please try again.&lt;/p&gt;</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Centralized Strings File</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-comment">// constants/strings.js</span>
+<span class="token-keyword">export const</span> STRINGS = {
+  SUBMIT_BTN: <span class="token-string">"Submit Application"</span>,
+  AUTH_ERROR: <span class="token-string">"Invalid email or password. Please try again."</span>
+};
+
+<span class="token-comment">// In Component:</span>
+&lt;button&gt;{STRINGS.SUBMIT_BTN}&lt;/button&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 5 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">Rule 5</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Any Block Statement (`if`, `else`, `for`) Should Have Braces `{ }`</h3>
+            </div>
+            <p class="section-desc">Always enclose block bodies in curly braces `{ }`, even for single-line statements, preventing accidental multi-statement execution bugs.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Omitting Braces</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">if</span> (!user.isActive) <span class="token-function">denyAccess</span>();
+
+<span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = 0; i &lt; items.length; i++) sum += items[i];</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Explicit Curly Braces { }</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">if</span> (!user.isActive) {
   <span class="token-function">denyAccess</span>();
+}
+
+<span class="token-keyword">for</span> (<span class="token-keyword">let</span> i = 0; i &lt; items.length; i++) {
+  sum += items[i];
 }</code></pre>
+              </div>
             </div>
           </div>
+
+          <!-- Rule 6 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8;">Rule 6</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Periodically, Do Code Reviews</h3>
+            </div>
+            <p class="section-desc">Code reviews should be routine and collaborative. Hold periodic review sessions to share design approaches, uphold quality standards, and eliminate blind spots.</p>
+            <div style="background: rgba(14, 165, 233, 0.08); border-left: 3px solid #38bdf8; padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.92rem;">
+              <i class="fa-solid fa-users-viewfinder" style="margin-right: 0.4rem; color: #38bdf8;"></i>
+              <strong>Team Habit:</strong> Pair on tricky PRs, review checklist items together, and treat every review as an opportunity for continuous knowledge transfer.
+            </div>
+          </div>
+
+          <!-- Rule 7 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">Rule 7</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Common Utils & Module-Level Utils Separation</h3>
+            </div>
+            <p class="section-desc">Separate global project-wide helper utilities from domain-specific utilities scoped inside feature modules.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Dumping Everything in One File</span>
+                </div>
+                <pre><code>src/
+└── utils.js <span class="token-comment">// 2,000 lines: date formatting, cart calculation, auth tokens...</span></code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Clean Separation of Scopes</span>
+                </div>
+                <pre><code>src/
+├── utils/           <span class="token-comment">// Common shared utils (date, string, validation)</span>
+└── modules/
+    └── checkout/
+        └── utils/   <span class="token-comment">// Module-level utils (taxCalc, cartDiscount)</span></code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 8 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">Rule 8</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Remove TODOs from PR</h3>
+            </div>
+            <p class="section-desc">Never merge code with leftover <code>// TODO</code> or <code>// FIXME</code> tags. Complete the work or convert it into a tracked Jira/GitHub issue with link in PR notes.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Lingering TODOs in PR</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-comment">// TODO: Handle offline retry mechanism</span>
+<span class="token-comment">// TODO: Remove dummy mock user before release</span>
+<span class="token-keyword">const</span> user = mockUser;</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Clean Code + Tracked Issue</span>
+                </div>
+                <pre><code><span class="token-comment">// Real implementation completed; deferred offline retry tracked in TICKET-321</span>
+<span class="token-keyword">const</span> user = <span class="token-keyword">await</span> <span class="token-function">fetchCurrentUser</span>();</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 9 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(234, 179, 8, 0.2); color: #fde047;">Rule 9</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">Console.log / warn / error — Replaced / Removed by Logger Methods</h3>
+            </div>
+            <p class="section-desc">Remove raw console statements before merging. In production applications, use a dedicated logger service that handles log levels and remote monitoring.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Raw Console Methods</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code>console.<span class="token-function">log</span>(<span class="token-string">"Fetching orders for:"</span>, userId);
+console.<span class="token-function">error</span>(<span class="token-string">"Network failed:"</span>, err);</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ Managed Logger Service</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i></button>
+                </div>
+                <pre><code><span class="token-keyword">import</span> { logger } <span class="token-keyword">from</span> <span class="token-string">'@/services/logger'</span>;
+
+logger.<span class="token-function">debug</span>(<span class="token-string">'Fetching orders'</span>, { userId });
+logger.<span class="token-function">error</span>(<span class="token-string">'Network failed'</span>, { error: err.message });</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule 10 -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="card-tag" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf;">Rule 10</span>
+              <h3 style="font-family: 'Outfit', sans-serif;">One Component / Custom Hook per File</h3>
+            </div>
+            <p class="section-desc">Keep each React component and each custom hook isolated in its own dedicated file for clear dependencies, testability, and fast tree-shaking.</p>
+            <div class="code-comparison">
+              <div class="code-box bad">
+                <div class="code-header">
+                  <span class="bad-title"><i class="fa-solid fa-xmark"></i> ❌ Cluttered Single File</span>
+                </div>
+                <pre><code>UserProfile.jsx:
+  ├── <span class="token-function">UserProfile</span>()
+  ├── <span class="token-function">UserAvatar</span>()
+  ├── <span class="token-function">UserBadge</span>()
+  └── <span class="token-function">useUserData</span>()</code></pre>
+              </div>
+              <div class="code-box good">
+                <div class="code-header">
+                  <span class="good-title"><i class="fa-solid fa-check"></i> ✅ One Unit Per File</span>
+                </div>
+                <pre><code>components/
+  ├── UserProfile.jsx
+  ├── UserAvatar.jsx
+  └── UserBadge.jsx
+hooks/
+  └── useUserData.js</code></pre>
+              </div>
+            </div>
+          </div>
+
         </article>
 
         <!-- Section 1 -->
@@ -1617,6 +1900,17 @@ retryCount++;</code></pre>
             <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>KISS &amp; YAGNI principles respected</span></label>
             <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>ESLint passes without violations</span></label>
             <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Formatted cleanly with Prettier</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Type safety verified in every util method (Rule 0)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Code simplified or documented when complex (Rule 1)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Every line of code serves a clear purpose (Rule 2)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>No hardcoded strings, integers, floats, or types (Rule 3)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>UI constants &amp; copy organized in strings file (Rule 4)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>All <code>if</code>, <code>else</code>, <code>for</code> blocks use curly braces <code>{ }</code> (Rule 5)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Regular peer code review conducted (Rule 6)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Utils cleanly separated into common vs module-level (Rule 7)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>All TODOs and temporary notes removed from PR (Rule 8)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Console methods replaced/removed with logger service (Rule 9)</span></label>
+            <label class="checklist-item"><input type="checkbox" onchange="updateChecklistProgress()"> <span>Strictly one component or custom hook per file (Rule 10)</span></label>
           </div>
         </article>
 
